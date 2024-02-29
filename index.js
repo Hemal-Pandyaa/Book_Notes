@@ -1,8 +1,8 @@
-import express from "express";
+import app from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
 
-const app = express.app();
+const app = app();
 
 
 app.listen(PORT, (req,res) => {
