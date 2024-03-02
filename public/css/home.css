@@ -1,0 +1,68 @@
+
+
+.container {
+    width: 1200px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: auto;
+    font-family: 'Oswald' !important;
+}
+
+.card{
+    border-radius: 20px;
+    margin: 30px;
+    display: flex;
+    gap: 20px;
+    padding: 30px;
+}
+
+.card img {
+    height: 400px;
+    width: 300px;
+    display: inline;
+}
+
+.seprater{
+    width: 1200px;
+    background-color: rgb(112, 111, 111);
+    height: 2px;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.title {
+    font-size: 48px;
+}
+
+.main-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: top;
+}
+
+.publisher {
+    font-size: 18px;
+}
+
+.author{
+    font-size: 36px;
+}
+
+.desc {
+    text-align: justify;
+}
+
+.extra-info {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.info div, .info p{
+    margin: 10px;
+}

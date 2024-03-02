@@ -1,2 +1,32 @@
 <%- include("partials/header.ejs") %>
+
+<div class="container">
+    <div class="books">
+        <% books.forEach(book => { %>
+        <div class="card">
+            <img
+                src="<%= book.cover_image_url %>"
+                alt="<%= book.title %> book cover"
+                class="cover" />
+            <div class="info">
+                <div class="main-info">
+                    <p class="title"><%= book.title %></p>
+                    <p class="publisher">Notes by:<%= book.publisher %></p>
+                </div>
+                <p class="author">By <%= book.author %></p>
+                <p class="desc"><%= book.description %></p>
+                <div class="extra-info">
+                    <p class="rating">Rating: <%= book.rating %></p>
+                    <p class="reviews">
+                        Total Review: <%= book.total_reviews %>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="seprater"></div>
+        <% }) %>
+    </div>
+</div>
+
 <%- include("partials/footer.ejs") %>
