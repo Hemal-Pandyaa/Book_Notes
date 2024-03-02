@@ -1,29 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Notes</title>
-</head>
-<body>
-    <header>
-        <nav>
-            <img src="images/Booker-Logo.png" alt="booker-logo">
-            Booker
-            <div class="options">
-                <ul>
-                    <li class="nav-option" id="Home">Home</li>
-                    <li class="nav-option" id="About">About</li>
-                    <li class="nav-option" id="Me">Me</li>
-                    <% if (locals.profileImage) { %>
-                        <img src="<%= profileImage %>" alt="User Profile Image">
-                    <% } else {%>
-                    <li class="nav-option" id="signUp">signUp</li>
-                    <li class="nav-option" id="login">login</li>
-                    <% } %>
-                </ul>
-            </div>
-        </nav>
-    </header>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/css/nav.css" />
+        <link rel="stylesheet" href="/css/variables.css" />
+        <title>Book Notes</title>
+    </head>
+    <body>
+        <header>
+            <nav>
+                <div class="branding">
+                    <div class="lg-logo-back disabled">
+                        <img
+                            src="/images/Booker-Logo.png"
+                            alt="booker-logo"
+                            class="logo lg-logo disabled" />
+                    </div>
+                    <img
+                        src="/images/Booker-Logo.png"
+                        alt="booker-logo"
+                        class="logo" />
+                    <p class="nav-option">Booker</p>
+                </div>
+                <div class="options">
+                    <ul>
+                        <li class="nav-option" id="Home">
+                            <a href="">Home</a>
+                        </li>
+                        <li class="nav-option" id="About">
+                            <a href="">About</a>
+                        </li>
+                        <li class="nav-option" id="Me">
+                            <a href="">Me</a>
+                        </li>
+                        <% if (locals.profileImage) { %>
+                        <li>
+                            <img
+                                src="<%= profileImage %>"
+                                alt="User Profile Image" />
+                        </li>
+                        <% } else {%>
+                        <li class="nav-option" id="signUp">
+                            <a href="">SignUp</a>
+                        </li>
+                        <li class="nav-option" id="login">
+                            <a href="">Login</a>
+                        </li>
+                        <% } %>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+    </body>
 </html>
