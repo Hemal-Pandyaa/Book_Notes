@@ -10,10 +10,9 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended:true}));
 
-
 // routes
 app.get("/", async (req,res) => {
-    res.render("index.ejs");
+    res.render("home.ejs");
 })
 
 // listening

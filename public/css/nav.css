@@ -1,0 +1,117 @@
+@import 'variables.css';
+
+*{
+    margin: 0;
+    padding: 0;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.logo{
+    border-radius: 50%;
+    
+}
+
+nav .logo{
+    width: 60px;
+    height: 60px;
+}
+
+.options ul{
+    display: flex;
+    gap: 20px;
+}
+
+
+nav{
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    max-width: 1400px;
+    margin: auto;
+    color: black;
+}
+
+header{
+    background-color: white;
+    position: fixed;
+    width: 100%;
+    height: 80px;
+}
+
+nav .branding {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 10px;
+}
+
+nav .nav-option {
+    list-style-type: none;
+    cursor: pointer;
+}
+
+body{
+    margin: auto;
+    background-color: var(--primary-color);
+}
+
+.nav-option a{
+    text-decoration: none;
+    color: black;
+    padding: 10px 25px;
+    border-radius: 5px;
+}
+
+.nav-option a:hover {
+    background-color: rgb(240, 240, 240);
+}
+
+.nav-option:hover{
+    color: rgb(198, 173, 7);
+}
+
+.logo:hover{
+    scale: 1.2;
+    transition: scale 0.2s ease-in-out;
+}
+
+#login a{
+    background-color: orange;
+}
+
+#signUp a{
+    border: 2px solid orange;
+    box-sizing: border-box;
+}
+
+#login a:hover{
+    background-color: rgb(230, 150, 3);
+}
+
+.lg-logo-back .lg-logo {
+    width: 600px;
+    height: 600px;
+}
+
+.lg-logo-back .lg-logo:hover {
+    scale: 1;
+}
+
+.lg-logo-back{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.disabled{
+    display: none;
+}
