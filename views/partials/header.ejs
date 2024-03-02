@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Notes</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <img src="images/Booker-Logo.png" alt="booker-logo">
+            Booker
+            <div class="options">
+                <ul>
+                    <li class="nav-option" id="Home">Home</li>
+                    <li class="nav-option" id="About">About</li>
+                    <li class="nav-option" id="Me">Me</li>
+                    <% if (locals.profileImage) { %>
+                        <img src="<%= profileImage %>" alt="User Profile Image">
+                    <% } else {%>
+                    <li class="nav-option" id="signUp">signUp</li>
+                    <li class="nav-option" id="login">login</li>
+                    <% } %>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</body>
+</html>
