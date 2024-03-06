@@ -11,14 +11,14 @@
             <div class="info">
                 <div class="main-info">
                     <p class="title"><%= book.title %></p>
-                    <p class="publisher">Notes by:<%= book.publisher %></p>
+                    <p class="publisher">Notes by: <%= book.display_name %></p>
                 </div>
                 <p class="author">By <%= book.author %></p>
                 <p class="desc"><%= book.description %></p>
                 <div class="extra-info">
                     <p class="rating">Rating: <%= book.rating %></p>
                     <p class="reviews">
-                        Total Review: <%= book.total_reviews %>
+                        Total Review: <%= book.total_review %>
                     </p>
                 </div>
             </div>

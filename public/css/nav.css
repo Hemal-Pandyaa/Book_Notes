@@ -30,15 +30,20 @@ nav{
     padding: 10px 20px;
     max-width: 1200px;
     margin: auto;
-    color: black;
+    color: var(--primary-font-color);
 }
 
 header{
-    background-color: white;
+    background-color: var(--secondary-color);
     position: fixed;
     width: 100%;
     height: 80px;
     border-bottom: 1px solid black;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
 }
 
 nav .branding {
@@ -60,17 +65,17 @@ body{
 
 .nav-option a{
     text-decoration: none;
-    color: black;
+    color: var(--primary-font-color);
     padding: 10px 25px;
     border-radius: 5px;
 }
 
 .nav-option a:hover {
-    background-color: rgb(240, 240, 240);
+    background-color: var(--primary-hover-background-color);
 }
 
 .nav-option:hover{
-    color: rgb(198, 173, 7);
+    color: var(--primary-hover-background-color);
 }
 
 .logo:hover{
@@ -88,7 +93,7 @@ body{
 }
 
 #login a:hover{
-    background-color: rgb(230, 150, 3);
+    background-color: rgb(255,127,80);
 }
 
 .lg-logo-back .lg-logo {

@@ -19,9 +19,9 @@
 }
 
 .card img {
-    height: 400px;
     width: 300px;
     display: inline;
+    margin: 20px;
 }
 
 .seprater{
@@ -63,6 +63,3 @@
     justify-content: space-between;
 }
 
-.info div, .info p{
-    margin: 10px;
-}
