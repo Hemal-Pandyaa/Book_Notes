@@ -1,8 +1,107 @@
 <%- include("partials/header.ejs") %>
 
 <div class="container">
+    <div class="filters">
+        <form action="/0" class="filters" method="POST">
+            <div class="filter-type">
+                <div class="drop-down">
+                    <p>
+                        <%= locals.sortBy || "Title" %>
+                        <svg
+                            class="caret"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-caret-down-fill"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                        </svg>
+                    </p>
+
+                    <div class="sort-by-option">
+                        <label for="asc">Title</label>
+                        <input
+                            type="radio"
+                            name="sortBy"
+                            value="title"
+                            checked />
+
+                        <label for="desc">Category</label>
+                        <input type="radio" name="sortBy" value="category" />
+
+                        <label for="desc">Popular</label>
+                        <input
+                            type="radio"
+                            name="sortBy"
+                            value="total_review" />
+
+                        <label for="desc">Rating</label>
+                        <input type="radio" name="sortBy" value="rating" />
+
+                        <label for="desc">Latest Updated</label>
+                        <input
+                            type="radio"
+                            name="sortBy"
+                            value="last_updated" />
+                    </div>
+                </div>
+                <div class="drop-down">
+                    <p>
+                        <%= locals.sortIn || "A - Z" %>
+                        <svg
+                            class="caret"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-caret-down-fill"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                        </svg>
+                    </p>
+
+                    <div class="sort-in-option">
+                        <label for="asc">A - Z</label>
+                        <input
+                            type="radio"
+                            name="sortIn"
+                            value="ASC"
+                            class="active"
+                            checked />
+
+                        <label for="desc">Z - A</label>
+                        <input type="radio" name="sortIn" value="DESC" />
+                    </div>
+                </div>
+            </div>
+            <div class="search-tools">
+                <input
+                    type="text"
+                    name="search"
+                    id="search-bar"
+                    class="search-bar"
+                    placeholder="Search" />
+                <button type="submit" class="search-button">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-search"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
     <div class="books">
-        <% books.forEach(book => { %>
+        <div class="seprater"></div>
+        <% books.forEach(book=> { %>
         <div class="card">
             <img
                 src="<%= book.cover_image_url %>"
@@ -17,6 +116,9 @@
                 <p class="desc"><%= book.description %></p>
                 <div class="extra-info">
                     <p class="rating">Rating: <%= book.rating %></p>
+                    <p class="last_updated">
+                        Last Updated: <%= book.last_updated %>
+                    </p>
                     <p class="reviews">
                         Total Review: <%= book.total_review %>
                     </p>

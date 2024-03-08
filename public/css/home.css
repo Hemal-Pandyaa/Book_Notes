@@ -2,7 +2,7 @@
 
 .container {
     width: 1200px;
-    margin: auto;
+    margin: 60px auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -63,3 +63,76 @@
     justify-content: space-between;
 }
 
+.filters{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: top;
+    padding: 0px 20px;
+    margin: auto;
+    font-size: 18px;
+}
+
+.filter-type{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.search-bar{
+    height: 40px;
+    border-radius: 20px;
+    border: 1px solid black;
+    background-color: var(--primary-color);
+    width: 200px;
+    padding: 0px 20px;
+    font-size: 18px;
+}
+
+.search-button{
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border: 1px solid black;
+}
+
+.caret{
+    position: relative;
+    top: 2px;
+}
+
+.drop-down {
+    background-color: orange;
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 1px 15px;
+    text-align: center;
+    position:relative;
+    cursor: pointer;
+}
+
+.drop-down label{
+    display: block;
+}
+
+.drop-down input{
+    display: none;
+}
+
+.card img {
+     border-radius: 10px;
+     border: 1px solid black;
+}
+
+.drop-down {
+    max-height: 30px;
+    overflow: hidden;
+    transition: max-height 1s ease;
+}
+
+.open{
+    max-height: 500px;
+    transition: max-height 2s ease-in-out;
+}
