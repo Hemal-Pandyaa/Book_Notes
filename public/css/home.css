@@ -1,5 +1,3 @@
-
-
 .container {
     width: 1200px;
     margin: 60px auto;
@@ -10,7 +8,7 @@
     font-family: 'Oswald' !important;
 }
 
-.card{
+.card {
     border-radius: 20px;
     margin: 30px;
     display: flex;
@@ -24,7 +22,7 @@
     margin: 20px;
 }
 
-.seprater{
+.seprater {
     width: 1200px;
     background-color: rgb(112, 111, 111);
     height: 2px;
@@ -49,7 +47,7 @@
     font-size: 18px;
 }
 
-.author{
+.author {
     font-size: 36px;
 }
 
@@ -63,7 +61,7 @@
     justify-content: space-between;
 }
 
-.filters{
+.filters {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -74,14 +72,14 @@
     font-size: 18px;
 }
 
-.filter-type{
+.filter-type {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     gap: 40px;
 }
 
-.search-bar{
+.search-bar {
     height: 40px;
     border-radius: 20px;
     border: 1px solid black;
@@ -91,14 +89,14 @@
     font-size: 18px;
 }
 
-.search-button{
+.search-button {
     border-radius: 50%;
     width: 40px;
     height: 40px;
     border: 1px solid black;
 }
 
-.caret{
+.caret {
     position: relative;
     top: 2px;
 }
@@ -109,21 +107,23 @@
     border: 1px solid black;
     padding: 1px 15px;
     text-align: center;
-    position:relative;
+    position: relative;
     cursor: pointer;
 }
 
-.drop-down label{
+.drop-down label {
     display: block;
+    border-top: 1px dashed black;
+    cursor: pointer;
 }
 
-.drop-down input{
+.drop-down input {
     display: none;
 }
 
 .card img {
-     border-radius: 10px;
-     border: 1px solid black;
+    border-radius: 5px;
+    border: 1px solid black;
 }
 
 .drop-down {
@@ -132,7 +132,11 @@
     transition: max-height 1s ease;
 }
 
-.open{
+.open {
     max-height: 500px;
     transition: max-height 2s ease-in-out;
+}
+
+.active {
+    color: var(--primary-color);
 }

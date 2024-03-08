@@ -9,7 +9,15 @@ switchList.forEach((s) => {
 });
 
 $(".drop-down").each(function (index, dropdown) {
-    console.log(this);
+    $(dropdown).find("label").each((Index, label) => {
+        $(label).on("click", () => {
+            $(dropdown).find("label").each((Index, label) => {
+                $(label).removeClass("active");
+            });
+            $(label).addClass("active");
+        });
+    });
+
     $(dropdown).on("click", function (e) {
         $(".drop-down").each(function (Index, Dropdown) {
             if (index != Index) {

@@ -34,7 +34,8 @@ app.get("/:page", async (req,res) => {
     const page = parseInt(req.params.page);
     
     let books;
-    const result = await getAllBooks();
+    const info = "title,author,description,display_name,rating,total_review,TO_CHAR(last_updated, 'Mon DD YYYY') AS last_updated,cover_image_url"
+    const result = await getInfoOfBook(info);
     if(result.error){
 
     } else {
@@ -56,8 +57,8 @@ app.listen(PORT, (req,res) => {
 })
 
 //* Api Part
-async function getAllBooks(){
-    const query = "SELECT title,description,author,rating,total_review,cover_image_url,display_name FROM books INNER JOIN users ON user_id = users.id"
+async function getInfoOfBook(info){
+    const query = `SELECT ${info} FROM books INNER JOIN users ON user_id = users.id`
     const response = await db.query(query)
     if (response.error){
   

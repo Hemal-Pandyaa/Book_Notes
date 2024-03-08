@@ -21,30 +21,33 @@
                     </p>
 
                     <div class="sort-by-option">
-                        <label for="asc">Title</label>
+                        <label for="title" class="active">Title</label>
                         <input
                             type="radio"
                             name="sortBy"
                             value="title"
+                            id="title"
                             checked />
 
-                        <label for="desc">Category</label>
-                        <input type="radio" name="sortBy" value="category" />
+                        <label for="category">Category</label>
+                        <input type="radio" name="sortBy" value="category" id="category"/>
 
-                        <label for="desc">Popular</label>
+                        <label for="popular">Popular</label>
                         <input
                             type="radio"
                             name="sortBy"
-                            value="total_review" />
+                            value="total_review"
+                            id="popular" />
 
-                        <label for="desc">Rating</label>
-                        <input type="radio" name="sortBy" value="rating" />
+                        <label for="rating">Rating</label>
+                        <input type="radio" name="sortBy" value="rating" id="rating"/>
 
-                        <label for="desc">Latest Updated</label>
+                        <label for="latest-updated">Latest Updated</label>
                         <input
                             type="radio"
                             name="sortBy"
-                            value="last_updated" />
+                            value="last_updated" 
+                            id="latest-updated"/>
                     </div>
                 </div>
                 <div class="drop-down">
@@ -64,16 +67,20 @@
                     </p>
 
                     <div class="sort-in-option">
-                        <label for="asc">A - Z</label>
+                        <label for="asc" class="active">A - Z</label>
                         <input
                             type="radio"
                             name="sortIn"
                             value="ASC"
-                            class="active"
+                            id="asc"
                             checked />
 
                         <label for="desc">Z - A</label>
-                        <input type="radio" name="sortIn" value="DESC" />
+                        <input
+                            type="radio"
+                            name="sortIn"
+                            value="DESC"
+                            id="desc" />
                     </div>
                 </div>
             </div>
