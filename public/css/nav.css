@@ -85,16 +85,16 @@ body{
 }
 
 #login a{
-    background-color: orange;
+    background-color: var(--primary-button-color);
 }
 
 #signUp a{
-    border: 2px solid orange;
+    border: 2px solid var(--primary-button-color);
     box-sizing: border-box;
 }
 
 #login a:hover{
-    background-color: rgb(255,127,80);
+    background-color: var(--primary-button-hover-color);
 }
 
 .lg-logo-back .lg-logo {

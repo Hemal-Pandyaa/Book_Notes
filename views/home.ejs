@@ -1,12 +1,20 @@
-<%- include("partials/header.ejs") %>
+<%- include("partials/header.ejs") %> <% function isActive(option,name){
+if(eval(option) === name){ return true; } else { return false; } } %>
 
 <div class="container">
+    <% if (locals.search) { %>
+    <h1 class="results">
+        Found <%= totalResult %> for search result for <%= search %>
+    </h1>
+    <% } %>
+
     <div class="filters">
         <form action="/0" class="filters" method="POST">
+            <!-- Filter by Type -->
             <div class="filter-type">
                 <div class="drop-down">
                     <p>
-                        <%= locals.sortBy || "Title" %>
+                        <%= locals.dSortBy || "Title" %>
                         <svg
                             class="caret"
                             xmlns="http://www.w3.org/2000/svg"
@@ -21,38 +29,63 @@
                     </p>
 
                     <div class="sort-by-option">
-                        <label for="title" class="active">Title</label>
-                        <input
-                            type="radio"
-                            name="sortBy"
-                            value="title"
-                            id="title"
-                            checked />
+                        <!-- Title -->
+                        <label
+                            for="title"
+                            class="<%= isActive('sortBy', 'title') ? 'active' : '' %>"
+                            >Title</label
+                        >
+                        <input type="radio" name="sortBy" value="title"
+                        id="title" <%= isActive('sortBy', 'title') ? 'checked' :
+                        '' %> />
 
-                        <label for="category">Category</label>
-                        <input type="radio" name="sortBy" value="category" id="category"/>
+                        <!-- Category -->
+                        <label
+                            for="category"
+                            class="<%= isActive('sortBy', 'category') ? 'active' : '' %>"
+                            >Category</label
+                        >
+                        <input type="radio" name="sortBy" value="category"
+                        id="category" <%= isActive('sortBy', 'category') ?
+                        'checked' : '' %> />
 
-                        <label for="popular">Popular</label>
-                        <input
-                            type="radio"
-                            name="sortBy"
-                            value="total_review"
-                            id="popular" />
+                        <!-- Popular -->
+                        <label
+                            for="popular"
+                            class="<%= isActive('sortBy', 'total_review') ? 'active' : '' %>"
+                            >Popular</label
+                        >
+                        <input type="radio" name="sortBy" value="total_review"
+                        id="popular" <%= isActive('sortBy', 'total_review') ?
+                        'checked' : '' %> />
 
-                        <label for="rating">Rating</label>
-                        <input type="radio" name="sortBy" value="rating" id="rating"/>
+                        <!-- Rating -->
+                        <label
+                            for="rating"
+                            class="<%= isActive('sortBy', 'rating') ? 'active' : '' %>"
+                            >Rating</label
+                        >
+                        <input type="radio" name="sortBy" value="rating"
+                        id="rating" <%= isActive('sortBy', 'rating') ? 'checked'
+                        : '' %> />
 
-                        <label for="latest-updated">Latest Updated</label>
-                        <input
-                            type="radio"
-                            name="sortBy"
-                            value="last_updated" 
-                            id="latest-updated"/>
+                        <!-- Latest Updated -->
+                        <label
+                            for="latest-updated"
+                            class="<%= isActive('sortBy', 'last_updated') ? 'active' : '' %>"
+                            >Latest Updated</label
+                        >
+                        <input type="radio" name="sortBy" value="last_updated"
+                        id="latest-updated" <%= isActive('sortBy',
+                        'last_updated') ? 'checked' : '' %> />
                     </div>
                 </div>
+
+                <!-- Filter by Order -->
                 <div class="drop-down">
+                    <!-- A - Z -->
                     <p>
-                        <%= locals.sortIn || "A - Z" %>
+                        <%= locals.dSortIn || "A - Z" %>
                         <svg
                             class="caret"
                             xmlns="http://www.w3.org/2000/svg"
@@ -67,30 +100,32 @@
                     </p>
 
                     <div class="sort-in-option">
-                        <label for="asc" class="active">A - Z</label>
-                        <input
-                            type="radio"
-                            name="sortIn"
-                            value="ASC"
-                            id="asc"
-                            checked />
+                        <!-- A - Z -->
+                        <label
+                            for="asc"
+                            class="<%= isActive('sortIn', 'ASC') ? 'active' : '' %>"
+                            >A - Z</label
+                        >
+                        <input type="radio" name="sortIn" value="ASC" id="asc"
+                        <%= isActive('sortIn', 'ASC') ? 'checked' : '' %> />
 
-                        <label for="desc">Z - A</label>
-                        <input
-                            type="radio"
-                            name="sortIn"
-                            value="DESC"
-                            id="desc" />
+                        <!-- Z - A -->
+                        <label
+                            for="desc"
+                            class="<%= isActive('sortIn', 'DESC') ? 'active' : '' %>"
+                            >Z - A</label
+                        >
+                        <input type="radio" name="sortIn" value="DESC" id="desc"
+                        <%= isActive('sortIn', 'DESC') ? 'checked' : '' %> />
                     </div>
                 </div>
             </div>
+
+            <!-- Search Tools -->
             <div class="search-tools">
-                <input
-                    type="text"
-                    name="search"
-                    id="search-bar"
-                    class="search-bar"
-                    placeholder="Search" />
+                <input type="text" name="search" id="search-bar"
+                class="search-bar" placeholder="Search" maxlength="50"
+                value="<%= locals.search || "" %>"/>
                 <button type="submit" class="search-button">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -106,26 +141,38 @@
             </div>
         </form>
     </div>
+
+    <!-- Book Display -->
     <div class="books">
         <div class="seprater"></div>
-        <% books.forEach(book=> { %>
+        <% books.forEach(book => { %>
         <div class="card">
+            <!-- Book Cover -->
+            <!-- <object data="https://onlinebookclub.org/book-covers/no-cover.jpg" type="image/jpg"> -->
             <img
                 src="<%= book.cover_image_url %>"
                 alt="<%= book.title %> book cover"
                 class="cover" />
+            <!-- </object> -->
+            <!-- Book Information -->
             <div class="info">
                 <div class="main-info">
+                    <!-- Book Title and Notes -->
                     <p class="title"><%= book.title %></p>
                     <p class="publisher">Notes by: <%= book.display_name %></p>
                 </div>
+
+                <!-- Author and Description -->
                 <p class="author">By <%= book.author %></p>
                 <p class="desc"><%= book.description %></p>
+
+                <!-- Extra Information -->
                 <div class="extra-info">
                     <p class="rating">Rating: <%= book.rating %></p>
                     <p class="last_updated">
                         Last Updated: <%= book.last_updated %>
                     </p>
+                    <p class="category">Category: <%= book.category %></p>
                     <p class="reviews">
                         Total Review: <%= book.total_review %>
                     </p>
@@ -133,8 +180,42 @@
             </div>
         </div>
 
+        <!-- Separator -->
         <div class="seprater"></div>
         <% }) %>
+    </div>
+    <div class="change-page">
+        <svg
+            class="caret left"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-caret-down-fill"
+            viewBox="0 0 16 16">
+            <path
+                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+        </svg>
+
+        <% for(let i = 0; i < totalAvalabilePage; i++) { %> 
+        <% if(locals.currentPage === i) {%>
+        <div class="page selected-page"><%= i %></div>
+        <% } else { %>
+        <div class="page"><%= i %></div>
+
+        <% } }%>
+
+        <svg
+            class="caret right"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-caret-down-fill"
+            viewBox="0 0 16 16">
+            <path
+                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+        </svg>
     </div>
 </div>
 

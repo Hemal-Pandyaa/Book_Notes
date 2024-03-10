@@ -15,6 +15,11 @@ $(".drop-down").each(function (index, dropdown) {
                 $(label).removeClass("active");
             });
             $(label).addClass("active");
+
+            const radioId = $(label).attr('for');
+            $('#' + radioId).prop('checked', true);
+
+            label.closest('form').submit()
         });
     });
 

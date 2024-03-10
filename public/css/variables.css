@@ -1,7 +1,11 @@
 :root {
-    --primary-color: rgb(237, 237, 237);
+    /* --primary-color: rgb(237, 237, 237); */
+    --primary-color: white;
     --secondary-color: rgb(0, 0, 0);
     --primary-font-color: rgb(255, 255, 255);
     --primary-hover-background-color: rgb(102, 102, 102);
-    
+    --primary-button-color: rgb(26, 116, 233);
+    --primary-button-hover-color: rgb(0, 76, 176);
+    --secondary-button-color: rgb(255, 136, 0);
+    --secondary-button-hover-color: rgb(214, 118, 0);
 }
