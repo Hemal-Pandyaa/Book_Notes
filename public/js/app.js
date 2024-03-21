@@ -41,6 +41,7 @@ $(".drop-down").each(function (index, dropdown) {
 // Make page change option working
 $(".page").on("click", function () {
     const page = $(this).text() - 1;
+    console.log(page)
 
     const searchParams = new URLSearchParams(window.location.search);
 
@@ -102,17 +103,18 @@ $(".close-button").on("click", (e) => {
     $(".notification").addClass("disabled");
 });
 
-$(".caret").each((Index, caret) => {
-    $(caret).on("click", () => {
-        let page = 1;
-        if ($(caret).hasClass(".right")) {
-            console.log($(".page.selected-page").text())
-            page = $(".page.selected-page").text() + 2; // current page + 1 -1 +1(for next page)
+$(".caret").each(async (Index, caret) => {
+    $(caret).on("click", async () => {
+        let page;
+        console.log($(".selected-page").text())
+        if ($(caret).hasClass("right")) {
+            console.log("right")
+            page = await $(".selected-page").text() - 1 + 1; // current page + 1 -1 +1(for next page)
         }else {
-            page = $(".page.selected-page").text() - 2; // page before previous page
+            page = await $(".selected-page").text() - 2; // page before previous page
         }
 
-
+        console.log(page)
         const searchParams = new URLSearchParams(window.location.search);
 
         // Set or update the 'page' parameter
