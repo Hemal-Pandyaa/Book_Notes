@@ -130,3 +130,100 @@ body{
     width: 100vw;
     height: 80px;
 }
+
+.profileImage{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid black;
+    position: relative;
+    top: -2px;
+}
+
+.notification {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 400px;
+    height: 150px;
+    border-radius: 10px;
+    border: 2px solid black;
+    background-color: rgb(255, 255, 140);
+    padding: 10px;
+    overflow: hidden;
+    animation: slide-up 11.5s linear forwards;
+    z-index: 3;
+}
+
+.close-button{
+    cursor: pointer;
+    position: absolute;
+    
+    right: 10px;
+    top: 10px;
+    transform: rotate(45deg);
+}
+
+.close-button img {
+    width: 20px;
+    height: 20px;
+}
+
+.notification p {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: justify;
+    margin-top: 15px;
+    
+}
+
+.button{
+    background-color: black;
+    border: 2px solid black;
+    border-radius: 3px;
+    padding: 10px 20px;
+    color: white;
+    position: absolute;
+    bottom: 30px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.timer{
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    height: 5px;
+    background-color: purple;
+    left: 0px;
+    animation: run-timer 10s linear forwards;
+
+}
+
+@keyframes run-timer {
+    0% {
+        width: 100%;
+    }
+    100%{
+        width: 0%;
+        display: none;
+    }
+}
+
+@keyframes slide-up {
+    0% {
+        transform: translateY(0px);
+    }
+    83.33% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+    91.67% {
+        transform: translateY(-200px);
+        opacity: 0.0;
+    }
+    100% {
+        opacity: 0.0;
+        display: none;
+    }
+}

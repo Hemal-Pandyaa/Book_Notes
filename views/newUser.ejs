@@ -1,0 +1,42 @@
+<%- include('./partials/header.ejs') %>
+<div class="container">
+    <section class="social-options">
+        <div class="google options" href="auth/google">
+            <img src="images/google.svg" alt="google logo">
+            <a href="/auth/google" class="google"><%= task %> With Google</a>
+        </div>
+        <div class="facebook options" href="auth/facebook">
+            <img src="images/facebook.svg" alt="facebook logo">
+            <a href="/auth/facebook" class="facebook"
+                ><%= task %> With Facebook</a>
+        </div>
+        <div class="x options">
+            <img src="images/twitter.svg" alt="x/twitter logo">
+            <a href="/auth/x" class="X"><%= task %> With X</a>
+        </div>
+        <div class="apple options">
+            <img src="images/apple.svg" alt="apple logo">
+            <a href="/auth/apple" class="Apple"><%= task %> With Apple</a>
+        </div>
+    </section>
+
+    <section class="seprate">
+        <div class="seprator"></div>
+        <p>OR</p>
+        <div class="seprator"></div>
+    </section>
+    <section class="local-login">
+        <form action="/auth/local" method="POST" >
+            <label for="email">Email: </label>
+            <input type="email" name="email" id="email" required />
+            <label for="password">Password: </label>
+            <input type="text" name="password" id="password" required />
+            <label for="retype-password">Retype-Password: </label>
+            <input type="retype-password" name="retype-password" id="retype-password" required />
+            <p class="message"></p>
+            <button type="submit" class="login-button"><%= task %></button>
+        </form>
+    </section>
+</div>
+
+<%- include('./partials/footer.ejs') %>

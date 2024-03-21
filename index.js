@@ -7,6 +7,11 @@
 import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
+import session from "express-session";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import GoogleStrategy from "passport-google-oauth2";
+import bcrypt from "bcryptjs";
 import env from "dotenv";
 env.config();
 
@@ -14,6 +19,7 @@ env.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const booksPerPage = 10;
+const saltRound = 10;
 
 const db = new pg.Client({
     user: process.env.PG_USERNAME,
@@ -25,30 +31,38 @@ const db = new pg.Client({
 
 db.connect();
 
+// * MiddleWares
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        saveUninitialized: true,
+        resave: true,
+        cookie: {
+            maxAge: 60 * 60 * 60 * 60 * 72,
+        },
+    })
+);
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 //* routes
+
 //? Get Route
-// This will hit up as website is loaded and will redirect to page 0
-app.get("/", (req, res) => {
-    res.redirect("/0?sortIn=ASC&sortBy=title");
-});
 
 // This is home page for my website
-app.get("/:page", async (req, res) => {
+app.get("/", async (req, res) => {
     // retriving information
-    const page = parseInt(req.params.page);
-    const sortIn = req.query.sortIn;
-    const sortBy = req.query.sortBy;
+    const page = parseInt(req.query.page) || 0;
+    const sortIn = req.query.sortIn || "ASC";
+    const sortBy = req.query.sortBy || "title";
     const search = req.query.search;
     // splices the result to get the get all the books between 1 to 15
     let books;
     const infoRequired =
         "title,author,description,display_name,rating,category,total_review,TO_CHAR(last_updated, 'Mon DD YYYY') AS last_updated,cover_image_url";
     let result;
-    console.log(sortIn && sortBy);
-    console.log(sortIn);
     if (sortIn && sortBy) {
         result = await getInfoOfBook(infoRequired, sortIn, sortBy, search);
     } else {
@@ -70,23 +84,57 @@ app.get("/:page", async (req, res) => {
         dSortBy: displayable.sortBy,
         search: search,
         totalResult: result.length,
-        totalAvalabilePage: (result.length / booksPerPage),
+        totalAvalabilePage: result.length / booksPerPage,
         currentPage: page,
+        
+    };
+    if(req.isAuthenticated()){
+        console.log("Authenticated : True")
+        if(req.user.profileImage == null){
+            data["profileImage"] = "Not avalabile";
+            data["message"] = {
+                message: "Seems Like You Haven't Completed Your Profile Yet. Complete it now to be ready to publish your own notes!",
+                button: "Complete Now!"
+            }
+        }else{
+            data["profileImage"] = "https://image.lexica.art/full_jpg/6d7832e4-07ed-47d1-b248-55f8c0c959a5";
+        }
     };
 
     res.render("home.ejs", data);
 });
 
+app.get("/signUp", async (req, res) => {
+    res.render("newUser.ejs", { task: "Sign Up" });
+});
+
+app.get("/login", async (req, res) => {
+    res.render("newUser.ejs", { task: "Login" });
+});
+
+app.get("/failed", async (req, res) => {
+    res.send("Login Failed");
+});
+
 //? Post Methods
 // this method will hit up for filters
-app.post("/:page", async (req, res) => {
-    const page = req.params.page;
+app.post("/", async (req, res) => {
+    const page = req.query.page;
     const sortIn = req.body.sortIn;
     const sortBy = req.body.sortBy;
     const search = req.body.search;
-    console.log(req.body);
-    res.redirect(`/${page}?sortIn=${sortIn}&sortBy=${sortBy}&search=${search}`);
+    res.redirect(
+        `/?page=${page}&sortIn=${sortIn}&sortBy=${sortBy}&search=${search}`
+    );
 });
+
+app.post(
+    "/auth/local",
+    passport.authenticate("signUp-local", {
+        successRedirect: "/",
+        failureRedirect: "/failed",
+    })
+);
 
 // listening
 app.listen(PORT, (req, res) => {
@@ -95,8 +143,8 @@ app.listen(PORT, (req, res) => {
 
 //* Api Part
 async function getInfoOfBook(info, sortIn, sortBy, search) {
-    if(!search){
-
+    if (!search) {
+        search = "";
     }
     let query;
     if (sortBy && sortIn) {
@@ -104,7 +152,7 @@ async function getInfoOfBook(info, sortIn, sortBy, search) {
     } else {
         query = `SELECT ${info} FROM books INNER JOIN users ON user_id = users.id WHERE title ILIKE '%${search}%'`;
     }
-    console.log(query);
+    query;
     const response = await db.query(query);
     if (response.error) {
         return { error: "Something Went Wrong!" };
@@ -112,6 +160,21 @@ async function getInfoOfBook(info, sortIn, sortBy, search) {
         return response.rows;
     }
 }
+
+
+async function addNewUser(email,password){
+    try{
+        const query = "INSERT INTO users (email,password) VALUES ($1, $2) RETURNING *"
+        var  user = await db.query(query, [email,password])
+        user = user.rows[0];
+    } catch (err){
+        console.log(err)
+        return {error: "Something Went Wrong!", user:false}
+    }
+    return {error: null, user: user}
+    
+}
+
 
 // * functions
 function convertToDisplayable(sortIn, sortBy) {
@@ -155,3 +218,26 @@ function convertToDisplayable(sortIn, sortBy) {
     }
     return { sortBy: dSortBy, sortIn: dSortIn };
 }
+
+// * Stratergies
+passport.use(
+    "signUp-local",
+    new Strategy(
+        { passwordField: "password", 
+        usernameField: "email" },
+
+        async function (email, password, cb) {
+            let hashedPassword = await bcrypt.hash(password, saltRound)
+            const response = await addNewUser(email,hashedPassword);
+            cb(response.error,response.user)
+        }
+    )
+);
+
+passport.serializeUser((user,cb) => {
+    return cb(null,user)
+});
+
+passport.deserializeUser((user,cb) => {
+    return cb(null,user)
+});

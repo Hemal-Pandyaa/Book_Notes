@@ -6,49 +6,62 @@
         <link rel="stylesheet" href="/css/nav.css" />
         <link rel="stylesheet" href="/css/variables.css" />
         <link rel="stylesheet" href="/css/home.css" />
+        <link rel="stylesheet" href="/css/login.css" />
         <title>Book Notes</title>
     </head>
     <body>
-        <header >
+        <header>
+            <% if (locals.message) { %>
+                <div class="notification">
+                    <div class="close-button"><img src="images/plus.svg" alt="cross button click to dismiss notification"></div>
+                    <p><%= message.message %></p>
+                    <button class="button"><%= message.button %></button>
+                    <div class="timer"></div>
+    
+                </div>
+            <% } %>
             <nav>
-                <div class="branding" >
+                <div class="branding">
                     <div class="lg-logo-back disabled">
                         <img
                             src="Images/Booker-Logo.png"
                             alt="booker-logo"
-                            class="logo lg-logo disabled" draggable="false"/>
+                            class="logo lg-logo disabled"
+                            draggable="false" />
                     </div>
                     <img
                         src="Images/Booker-Logo.png"
                         alt="booker-logo"
-                        class="logo" draggable="false"/>
+                        class="logo"
+                        draggable="false" />
                     <p class="nav-option">Booker</p>
                 </div>
                 <div class="options">
                     <ul>
                         <li class="nav-option" id="Home">
-                            <a href="">Home</a>
+                            <a href="/">Home</a>
                         </li>
                         <li class="nav-option" id="About">
-                            <a href="">About</a>
+                            <a href="/about">About</a>
                         </li>
                         <li class="nav-option" id="Me">
-                            <a href="">Me</a>
+                            <a href="/me">Me</a>
                         </li>
                         <% if (locals.profileImage) { %>
-                        <li>
+                        <li class="nav-option">
                             <img
-                                src="<%= profileImage %>"
-                                alt="User Profile Image" />
+                            src="<%= profileImage == "Not avalabile" ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" : profileImage%>"
+                            alt="User Profile Image" class="profileImage"/>
                         </li>
                         <% } else {%>
                         <li class="nav-option" id="signUp">
-                            <a href="">SignUp</a>
+                            <a href="/signUp">SignUp</a>
                         </li>
                         <li class="nav-option" id="login">
-                            <a href="">Login</a>
-                        </li>
+                            <a href="/login">Login</a>
+                            </li>
                         <% } %>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -56,4 +69,3 @@
         <div class="navarea"></div>
     </body>
 </html>
-
