@@ -86,26 +86,29 @@ app.get("/", async (req, res) => {
         totalResult: result.length,
         totalAvalabilePage: result.length / booksPerPage,
         currentPage: page,
-        
     };
-    if(req.isAuthenticated()){
-        console.log("Authenticated : True")
-        if(req.user.profileImage == null){
+    if (req.isAuthenticated()) {
+        console.log("Authenticated : True");
+        console.log(req.user);
+        if (req.user.display_picture == null) {
             data["profileImage"] = "Not avalabile";
-            data["message"] = {
-                message: "Seems Like You Haven't Completed Your Profile Yet. Complete it now to be ready to publish your own notes!",
-                button: "Complete Now!"
-            }
-        }else{
-            data["profileImage"] = "https://image.lexica.art/full_jpg/6d7832e4-07ed-47d1-b248-55f8c0c959a5";
+        } else {
+            data["profileImage"] = req.user.display_picture;
         }
-    };
+        if (!req.user.complete_profile) {
+            data["message"] = {
+                message:
+                    "Seems Like You Haven't Completed Your Profile Yet. Complete it now to be ready to publish your own notes!",
+                button: "Complete Now!",
+            };
+        }
+    }
 
     res.render("home.ejs", data);
 });
 
 app.get("/signUp", async (req, res) => {
-    res.render("newUser.ejs", { task: "Sign Up" });
+    res.render("newUser.ejs", { task: "Sign-up" });
 });
 
 app.get("/login", async (req, res) => {
@@ -115,6 +118,14 @@ app.get("/login", async (req, res) => {
 app.get("/failed", async (req, res) => {
     res.send("Login Failed");
 });
+
+app.get(
+    "/auth/callback",
+    passport.authenticate("google-strategy", {
+        successRedirect: "/",
+        failureRedirect: "/failed",
+    })
+);
 
 //? Post Methods
 // this method will hit up for filters
@@ -129,13 +140,27 @@ app.post("/", async (req, res) => {
 });
 
 app.post(
-    "/auth/local",
+    "/auth/local/Sign-up",
     passport.authenticate("signUp-local", {
         successRedirect: "/",
         failureRedirect: "/failed",
     })
 );
 
+app.post(
+    "/auth/local/Login",
+    passport.authenticate("login-local", {
+        successRedirect: "/",
+        failureRedirect: "/failed",
+    })
+);
+
+app.post(
+    "/auth/google/",
+    passport.authenticate(`google-strategy`, {
+        scope: ["profile", "email"],
+    })
+);
 // listening
 app.listen(PORT, (req, res) => {
     console.log(`App is running on port ${PORT}`);
@@ -161,20 +186,44 @@ async function getInfoOfBook(info, sortIn, sortBy, search) {
     }
 }
 
-
-async function addNewUser(email,password){
-    try{
-        const query = "INSERT INTO users (email,password) VALUES ($1, $2) RETURNING *"
-        var  user = await db.query(query, [email,password])
+async function addNewUser(email, password, fName, lName, d_picture) {
+    try {
+        console.log(d_picture);
+        const query = `INSERT INTO users (email,password, fName, lName, display_picture, complete_profile) VALUES ($1, $2, $3, $4, '${d_picture}', FALSE) RETURNING *`;
+        var user = await db.query(query, [email, password, fName, lName]);
         user = user.rows[0];
-    } catch (err){
-        console.log(err)
-        return {error: "Something Went Wrong!", user:false}
+    } catch (err) {
+        console.log(err);
+        return { error: "Something Went Wrong!", user: false };
     }
-    return {error: null, user: user}
-    
+    return { error: null, user: user };
 }
 
+async function userExist(email) {
+    try {
+        const query = "Select email FROM users WHERE email=$1";
+        var user = await db.query(query, [email]);
+        console.log(user.rows.length);
+        if (user.rows.length === 0) {
+            return false;
+        } else {
+            return true;
+        }
+    } catch {
+        return false;
+    }
+}
+
+async function getUser(email) {
+    try {
+        const query = "SELECT * FROM users WHERE email = $1";
+        var user = await db.query(query, [email]);
+        return user.rows[0];
+    } catch {
+        console.log("Something went wrong!");
+        return null;
+    }
+}
 
 // * functions
 function convertToDisplayable(sortIn, sortBy) {
@@ -223,21 +272,84 @@ function convertToDisplayable(sortIn, sortBy) {
 passport.use(
     "signUp-local",
     new Strategy(
-        { passwordField: "password", 
-        usernameField: "email" },
+        { passwordField: "password", usernameField: "email" },
 
         async function (email, password, cb) {
-            let hashedPassword = await bcrypt.hash(password, saltRound)
-            const response = await addNewUser(email,hashedPassword);
-            cb(response.error,response.user)
+            let hashedPassword = await bcrypt.hash(password, saltRound);
+            if ((await userExist(email)) === false) {
+                const response = await addNewUser(
+                    email,
+                    hashedPassword,
+                    null,
+                    null,
+                    null
+                );
+                cb(response.error, response.user);
+            } else {
+                cb("user already exist", null);
+            }
         }
     )
 );
 
-passport.serializeUser((user,cb) => {
-    return cb(null,user)
+passport.use(
+    "login-local",
+    new Strategy(
+        { passwordField: "password", usernameField: "email" },
+        async function (email, password, cb) {
+            if ((await userExist(email)) === true) {
+                const user = await getUser(email);
+                if (await bcrypt.compare(password, user.password)) {
+                    cb(null, user);
+                } else {
+                    cb("Wrong Password!", null);
+                }
+            } else {
+                cb("user dosen't exist sign up instead!", null);
+            }
+        }
+    )
+);
+
+passport.use(
+    "google-strategy",
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: "http://localhost:3000/auth/callback",
+        },
+        async (accessToken, refreshToken, profile, cb) => {
+            try {
+                if ((await userExist(profile.email)) === false) {
+                    const response = await addNewUser(
+                        profile.email,
+                        "Google",
+                        profile.given_name,
+                        profile.family_name,
+                        profile.picture
+                    );
+                    cb(response.error, response.user);
+                } else {
+                    try {
+                        const user = await getUser(profile.email);
+                        cb(null, user);
+                    } catch {
+                        cb("Login Failed", null);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+                cb("something went Wrong!", null);
+            }
+        }
+    )
+);
+
+passport.serializeUser((user, cb) => {
+    return cb(null, user);
 });
 
-passport.deserializeUser((user,cb) => {
-    return cb(null,user)
+passport.deserializeUser((user, cb) => {
+    return cb(null, user);
 });

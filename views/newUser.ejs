@@ -1,23 +1,12 @@
 <%- include('./partials/header.ejs') %>
 <div class="container">
     <section class="social-options">
-        <div class="google options" href="auth/google">
-            <img src="images/google.svg" alt="google logo">
-            <a href="/auth/google" class="google"><%= task %> With Google</a>
-        </div>
-        <div class="facebook options" href="auth/facebook">
-            <img src="images/facebook.svg" alt="facebook logo">
-            <a href="/auth/facebook" class="facebook"
-                ><%= task %> With Facebook</a>
-        </div>
-        <div class="x options">
-            <img src="images/twitter.svg" alt="x/twitter logo">
-            <a href="/auth/x" class="X"><%= task %> With X</a>
-        </div>
-        <div class="apple options">
-            <img src="images/apple.svg" alt="apple logo">
-            <a href="/auth/apple" class="Apple"><%= task %> With Apple</a>
-        </div>
+        <form action="/auth/google" method="POST" id="authenticate-with-login">
+            <div class="google options" href="auth/google" onclick="$('#authenticate-with-login').submit()">
+                <img src="images/google.svg" alt="google logo">
+                <a href="/auth/google/" class="google"><%= task %> With Google</a>
+            </div>
+        </form>
     </section>
 
     <section class="seprate">
@@ -26,7 +15,7 @@
         <div class="seprator"></div>
     </section>
     <section class="local-login">
-        <form action="/auth/local" method="POST" >
+        <form action="/auth/local/<%= task %>" method="POST" >
             <label for="email">Email: </label>
             <input type="email" name="email" id="email" required />
             <label for="password">Password: </label>
