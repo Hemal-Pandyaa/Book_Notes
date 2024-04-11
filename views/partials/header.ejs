@@ -7,6 +7,8 @@
         <link rel="stylesheet" href="/css/variables.css" />
         <link rel="stylesheet" href="/css/home.css" />
         <link rel="stylesheet" href="/css/login.css" />
+        <link rel="stylesheet" href="/css/profile.css" />
+        
         <title>Book Notes</title>
     </head>
     <body>
@@ -15,7 +17,7 @@
                 <div class="notification">
                     <div class="close-button"><img src="images/plus.svg" alt="cross button click to dismiss notification"></div>
                     <p><%= message.message %></p>
-                    <button class="button"><%= message.button %></button>
+                    <a class="button" href="<%= message.redirect %>"><%= message.button %></a>
                     <div class="timer"></div>
     
                 </div>
@@ -24,13 +26,13 @@
                 <div class="branding">
                     <div class="lg-logo-back disabled">
                         <img
-                            src="Images/Booker-Logo.png"
+                            src="/images/Booker-Logo.png"
                             alt="booker-logo"
                             class="logo lg-logo disabled"
                             draggable="false" />
                     </div>
                     <img
-                        src="Images/Booker-Logo.png"
+                        src="/images/Booker-Logo.png"
                         alt="booker-logo"
                         class="logo"
                         draggable="false" />
@@ -53,7 +55,13 @@
                             src="<%= profileImage == "Not avalabile" ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" : profileImage%>"
                             alt="User Profile Image" class="profileImage"/>
                         </li>
-                        <% } else {%>
+                        <% } else if(locals.user) { %>
+                        <li class="nav-option">
+                            <img
+                            src="<%= user.display_picture == null ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" : user.display_picture%>"
+                            alt="User Profile Image" class="profileImage"/>
+                        </li>
+                        <% } else { %>
                         <li class="nav-option" id="signUp">
                             <a href="/signUp">SignUp</a>
                         </li>

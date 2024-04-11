@@ -1,0 +1,23 @@
+<%- include('./partials/header.ejs') %>
+<div class="container">
+    <div class="card1">
+        <div class="profile-image"><img draggable="false" src="<%= user.display_picture %>" alt="profile-image" /></div>
+        <div class="info">
+            <div class="display_name"><p><%= user.display_name ? user.display_name : "" %></p></div>
+            <div class="date_joined"></div>
+            <div class="level"></div>
+            <div class="submissions"></div>
+        </div>
+    </div>
+    <div class="card2">
+        <div class="about"></div>
+    </div>
+    <% if(locals.books){ %>
+    <div class="card3">
+        <div class="books"></div>
+    </div>
+    <% } else { %>
+    <p class="nothing">Nothing to show!</p>
+    <% } %>
+</div>
+<%- include('./partials/footer.ejs') %>

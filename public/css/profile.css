@@ -1,0 +1,32 @@
+.card1{
+    display: flex;
+    background-color: rgb(197, 195, 195);
+    border-radius: 50px;
+    border: 1px solid black;
+    padding: 20px;
+    width: 60%;
+    justify-content: left;
+    gap: 30px;
+}
+
+.profile-image img{
+    border-radius: 50%;
+    height: 100%;
+    width: 100%;
+}
+
+.profile-image {
+    width: 200px;
+    height: 200px;
+}
+
+.info{
+    width: auto;
+}
+
+.display_name{
+    font-size: 56px;
+    font-weight: 900;
+
+}
+

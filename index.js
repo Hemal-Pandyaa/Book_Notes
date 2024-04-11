@@ -4,7 +4,7 @@
 //! You may install Better comments Extension by Aaron Bond for highlighting
 
 //* importing
-import express from "express";
+import express, { response } from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
 import session from "express-session";
@@ -13,6 +13,7 @@ import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
 import bcrypt from "bcryptjs";
 import env from "dotenv";
+import cookieParser from "cookie-parser";
 env.config();
 
 //* constants and config
@@ -46,6 +47,7 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 
 //* routes
 
@@ -89,18 +91,25 @@ app.get("/", async (req, res) => {
     };
     if (req.isAuthenticated()) {
         console.log("Authenticated : True");
-        console.log(req.user);
         if (req.user.display_picture == null) {
             data["profileImage"] = "Not avalabile";
         } else {
             data["profileImage"] = req.user.display_picture;
         }
-        if (!req.user.complete_profile) {
+        console.log(req.cookies);
+        const notified = req.cookies.notified;
+        if (!req.user.complete_profile && !notified) {
             data["message"] = {
                 message:
                     "Seems Like You Haven't Completed Your Profile Yet. Complete it now to be ready to publish your own notes!",
                 button: "Complete Now!",
+                redirect: "/me",
             };
+            res.cookie("notified", true, {
+                maxAge: 1000 * 60 * 60 * 5,
+                secure: true,
+                httpOnly: true,
+            });
         }
     }
 
@@ -127,6 +136,23 @@ app.get(
     })
 );
 
+app.get("/user/profile", (req, res) => {
+    res.render("profile.ejs");
+});
+
+app.get("/me", (req, res) => {
+    if (req.isAuthenticated()) {
+        console.log(req.user)
+        if (!req.user.display_name) {
+            res.render("display_name.ejs");
+            return;
+        }
+        res.render("profile.ejs", { user: req.user });
+    } else {
+        res.redirect("/login");
+    }
+});
+
 //? Post Methods
 // this method will hit up for filters
 app.post("/", async (req, res) => {
@@ -139,10 +165,19 @@ app.post("/", async (req, res) => {
     );
 });
 
+app.post("/me", (req, res) => {
+    if (req.isAuthenticated()) {
+        updateDisplayName(req.body.display_name, req.user.email);
+        res.redirect("/me");
+    } else {
+        res.redirect("/login");
+    }
+});
+
 app.post(
     "/auth/local/Sign-up",
     passport.authenticate("signUp-local", {
-        successRedirect: "/",
+        successRedirect: "/user/completeProfile",
         failureRedirect: "/failed",
     })
 );
@@ -161,6 +196,7 @@ app.post(
         scope: ["profile", "email"],
     })
 );
+
 // listening
 app.listen(PORT, (req, res) => {
     console.log(`App is running on port ${PORT}`);
@@ -188,7 +224,6 @@ async function getInfoOfBook(info, sortIn, sortBy, search) {
 
 async function addNewUser(email, password, fName, lName, d_picture) {
     try {
-        console.log(d_picture);
         const query = `INSERT INTO users (email,password, fName, lName, display_picture, complete_profile) VALUES ($1, $2, $3, $4, '${d_picture}', FALSE) RETURNING *`;
         var user = await db.query(query, [email, password, fName, lName]);
         user = user.rows[0];
@@ -221,6 +256,18 @@ async function getUser(email) {
         return user.rows[0];
     } catch {
         console.log("Something went wrong!");
+        return null;
+    }
+}
+
+async function updateDisplayName(display_name, email) {
+    try {
+        console.log(display_name, email)
+        const query = "UPDATE users SET display_name = $1 WHERE email = $2 RETURNING *";
+        const response = await db.query(query, [display_name, email]);
+        console.log(response)
+    } catch(error) {
+        console.log(error, "Something went wrong!")
         return null;
     }
 }
@@ -320,6 +367,7 @@ passport.use(
             callbackURL: "http://localhost:3000/auth/callback",
         },
         async (accessToken, refreshToken, profile, cb) => {
+            console.log(profile._json.picture);
             try {
                 if ((await userExist(profile.email)) === false) {
                     const response = await addNewUser(
@@ -327,7 +375,7 @@ passport.use(
                         "Google",
                         profile.given_name,
                         profile.family_name,
-                        profile.picture
+                        profile._json.picture
                     );
                     cb(response.error, response.user);
                 } else {
