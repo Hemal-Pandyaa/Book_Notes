@@ -9,7 +9,7 @@ include('./partials/header.ejs') %>
                     <img src="/images/plus.svg" alt="Cross icon" />
                 </button>
                 <h1 class="heading">Edit Profile</h1>
-                <form action="/me" method="POST">
+                <form action="/updateField" method="POST">
                     <label for="edit-image">
                         <div class="edit-image">
                             <img
@@ -141,7 +141,7 @@ include('./partials/header.ejs') %>
                 <div class="current_reading">
                     <%= user.display_name %> Is Currently Reading : <br />
                     <p class="highlight">
-                        <%= user.current_reading ? user.current_reading : "Nothing" %>
+                        <%= user.currently_reading %>
                     </p>
                     <div class="submissions"></div>
                 </div>
@@ -154,7 +154,7 @@ include('./partials/header.ejs') %>
         <div class="card2">
             <p class="heading">About :</p>
             <p class="about highlight">
-                <%= 'I am software devloper and i have a hooby to read books  my part time I do this to increase my knowledge and this platform is the best way to do so i can read summary written by others and can also rephrase it..' %>
+                <%= user.about %>
             </p>
         </div>
         <!-- <% if(locals.books){ %>

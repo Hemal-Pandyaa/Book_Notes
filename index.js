@@ -17,9 +17,8 @@ import bcrypt from "bcryptjs";
 import env from "dotenv";
 import cookieParser from "cookie-parser";
 import favicon from "serve-favicon";
-import path  from 'path';
-import { fileURLToPath } from 'url';
-
+import path from "path";
+import { fileURLToPath } from "url";
 
 env.config();
 
@@ -30,7 +29,7 @@ const booksPerPage = 10;
 const saltRound = 10;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use(favicon(path.join(__dirname, 'favicon.ico')))
+app.use(favicon(path.join(__dirname, "favicon.ico")));
 
 const db = new pg.Client({
     user: process.env.PG_USERNAME,
@@ -101,7 +100,10 @@ app.get("/", async (req, res) => {
     };
     if (req.isAuthenticated()) {
         console.log("Authenticated : True");
-        if (req.user.display_picture == "null" || req.user.display_picture == null) {
+        if (
+            req.user.display_picture == "null" ||
+            req.user.display_picture == null
+        ) {
             data["profileImage"] = "Not avalabile";
         } else {
             data["profileImage"] = req.user.display_picture;
@@ -145,7 +147,7 @@ app.get(
 );
 
 app.get("/me", (req, res) => {
-    console.log("Hello")
+    console.log("Hello");
     if (req.isAuthenticated()) {
         console.log(req.user);
         if (!req.user.display_name) {
@@ -158,7 +160,10 @@ app.get("/me", (req, res) => {
         const options = { year: "numeric", month: "long", day: "numeric" };
         const formattedDate = date.toLocaleDateString("en-US", options);
 
-        res.render("profile.ejs", { user: req.user, formattedDate: formattedDate });
+        res.render("profile.ejs", {
+            user: req.user,
+            formattedDate: formattedDate,
+        });
     } else {
         res.redirect("/login");
     }
@@ -178,13 +183,32 @@ app.post("/", async (req, res) => {
 
 app.post("/me", async (req, res) => {
     if (req.isAuthenticated()) {
-        const newUser = await updateDisplayName(req.body.display_name, req.user.email);
+        const newUser = await updateDisplayName(
+            req.body.display_name,
+            req.user.email
+        );
         req.user.display_name = newUser.display_name;
-        console.log(newUser)
+        console.log(newUser);
         res.redirect("/me");
-        
     } else {
         res.redirect("/login");
+    }
+});
+
+app.post("/updateField", async (req, res) => {
+    if (req.isAuthenticated()) {
+        const FieldValue = {};
+        Object.entries(req.body).forEach(([Field, value]) => {
+            FieldValue[Field] = value;
+        });
+        console.log(FieldValue);
+        updateField(FieldValue, req.user.id);
+        req.logout((e) => {
+            console.log(e)
+        });
+        res.redirect("/me");
+    } else {
+        res.redirect("/");
     }
 });
 
@@ -239,10 +263,10 @@ async function getInfoOfBook(info, sortIn, sortBy, search) {
 async function addNewUser(email, password, fName, lName, d_picture) {
     try {
         let query;
-        if(d_picture == null){
+        if (d_picture == null) {
             query = `INSERT INTO users (email,password, fName, lName, complete_profile) VALUES ($1, $2, $3, $4, FALSE) RETURNING *`;
-        }else {
-        query = `INSERT INTO users (email,password, fName, lName, display_picture, complete_profile) VALUES ($1, $2, $3, $4, '${d_picture}', FALSE) RETURNING *`;
+        } else {
+            query = `INSERT INTO users (email,password, fName, lName, display_picture, complete_profile) VALUES ($1, $2, $3, $4, '${d_picture}', FALSE) RETURNING *`;
         }
         var user = await db.query(query, [email, password, fName, lName]);
         user = user.rows[0];
@@ -285,10 +309,35 @@ async function updateDisplayName(display_name, email) {
         const query =
             "UPDATE users SET display_name = $1 WHERE email = $2 RETURNING *";
         const response = await db.query(query, [display_name, email]);
-        return response.rows[0]
+        return response.rows[0];
     } catch (error) {
         console.log(error, "Something went wrong!");
         return null;
+    }
+}
+
+async function updateField(FieldValue, id) {
+    try {
+        let values = [];
+        let query = "UPDATE users SET ";
+
+        let i = 1;
+        Object.entries(FieldValue).forEach(([Field, value]) => {
+            const string = `${Field} = $${i++},`;
+            query = query.concat(string);
+            values.push(value);
+        });
+        query = query.slice(0, -1);
+        query = query.concat(` WHERE id = $${i} RETURNING *`);
+        values.push(id);
+        console.log(query);
+        console.log(values);
+        const response = await db.query(query, values);
+        return response;
+    } catch (error) {
+        console.log(error);
+        console.log("Something went wrong!");
+        return "Something went wrong!";
     }
 }
 
@@ -366,10 +415,9 @@ passport.use(
         async function (email, password, cb) {
             if ((await userExist(email)) === true) {
                 const user = await getUser(email);
-                if(user.password == 'Google'){
-                    cb("Login with google", null)
-                }
-                else if (await bcrypt.compare(password, user.password)) {
+                if (user.password == "Google") {
+                    cb("Login with google", null);
+                } else if (await bcrypt.compare(password, user.password)) {
                     cb(null, user);
                 } else {
                     cb("Wrong Password!", null);
