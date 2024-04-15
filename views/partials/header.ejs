@@ -52,13 +52,13 @@
                         <% if (locals.profileImage) { %>
                         <li class="nav-option">
                             <img
-                            src="<%= profileImage == "Not avalabile" ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" : profileImage%>"
+                            src="<%= profileImage %>"
                             alt="User Profile Image" class="profileImage"/>
                         </li>
                         <% } else if(locals.user) { %>
                         <li class="nav-option">
                             <img
-                            src="<%= user.display_picture == null ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" : user.display_picture%>"
+                            src="<%= user.display_picture %>"
                             alt="User Profile Image" class="profileImage"/>
                         </li>
                         <% } else { %>

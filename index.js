@@ -2,9 +2,11 @@
 //? And this mean sub-section
 // and this is normal comment
 //! You may install Better comments Extension by Aaron Bond for highlighting
+// TODO: Make website responseive. After completing /me page
+// TODO: Image change feature
 
 //* importing
-import express, { response } from "express";
+import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
 import session from "express-session";
@@ -14,6 +16,11 @@ import GoogleStrategy from "passport-google-oauth2";
 import bcrypt from "bcryptjs";
 import env from "dotenv";
 import cookieParser from "cookie-parser";
+import favicon from "serve-favicon";
+import path  from 'path';
+import { fileURLToPath } from 'url';
+
+
 env.config();
 
 //* constants and config
@@ -21,6 +28,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const booksPerPage = 10;
 const saltRound = 10;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(favicon(path.join(__dirname, 'favicon.ico')))
 
 const db = new pg.Client({
     user: process.env.PG_USERNAME,
@@ -91,12 +101,11 @@ app.get("/", async (req, res) => {
     };
     if (req.isAuthenticated()) {
         console.log("Authenticated : True");
-        if (req.user.display_picture == null) {
+        if (req.user.display_picture == "null" || req.user.display_picture == null) {
             data["profileImage"] = "Not avalabile";
         } else {
             data["profileImage"] = req.user.display_picture;
         }
-        console.log(req.cookies);
         const notified = req.cookies.notified;
         if (!req.user.complete_profile && !notified) {
             data["message"] = {
@@ -112,7 +121,6 @@ app.get("/", async (req, res) => {
             });
         }
     }
-
     res.render("home.ejs", data);
 });
 
@@ -136,18 +144,21 @@ app.get(
     })
 );
 
-app.get("/user/profile", (req, res) => {
-    res.render("profile.ejs");
-});
-
 app.get("/me", (req, res) => {
+    console.log("Hello")
     if (req.isAuthenticated()) {
-        console.log(req.user)
+        console.log(req.user);
         if (!req.user.display_name) {
             res.render("display_name.ejs");
             return;
         }
-        res.render("profile.ejs", { user: req.user });
+        const dateString = "2024-04-01T18:30:00.000Z";
+        const date = new Date(dateString);
+
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        const formattedDate = date.toLocaleDateString("en-US", options);
+
+        res.render("profile.ejs", { user: req.user, formattedDate: formattedDate });
     } else {
         res.redirect("/login");
     }
@@ -165,10 +176,13 @@ app.post("/", async (req, res) => {
     );
 });
 
-app.post("/me", (req, res) => {
+app.post("/me", async (req, res) => {
     if (req.isAuthenticated()) {
-        updateDisplayName(req.body.display_name, req.user.email);
+        const newUser = await updateDisplayName(req.body.display_name, req.user.email);
+        req.user.display_name = newUser.display_name;
+        console.log(newUser)
         res.redirect("/me");
+        
     } else {
         res.redirect("/login");
     }
@@ -177,7 +191,7 @@ app.post("/me", (req, res) => {
 app.post(
     "/auth/local/Sign-up",
     passport.authenticate("signUp-local", {
-        successRedirect: "/user/completeProfile",
+        successRedirect: "/",
         failureRedirect: "/failed",
     })
 );
@@ -224,7 +238,12 @@ async function getInfoOfBook(info, sortIn, sortBy, search) {
 
 async function addNewUser(email, password, fName, lName, d_picture) {
     try {
-        const query = `INSERT INTO users (email,password, fName, lName, display_picture, complete_profile) VALUES ($1, $2, $3, $4, '${d_picture}', FALSE) RETURNING *`;
+        let query;
+        if(d_picture == null){
+            query = `INSERT INTO users (email,password, fName, lName, complete_profile) VALUES ($1, $2, $3, $4, FALSE) RETURNING *`;
+        }else {
+        query = `INSERT INTO users (email,password, fName, lName, display_picture, complete_profile) VALUES ($1, $2, $3, $4, '${d_picture}', FALSE) RETURNING *`;
+        }
         var user = await db.query(query, [email, password, fName, lName]);
         user = user.rows[0];
     } catch (err) {
@@ -262,12 +281,13 @@ async function getUser(email) {
 
 async function updateDisplayName(display_name, email) {
     try {
-        console.log(display_name, email)
-        const query = "UPDATE users SET display_name = $1 WHERE email = $2 RETURNING *";
+        console.log(display_name, email);
+        const query =
+            "UPDATE users SET display_name = $1 WHERE email = $2 RETURNING *";
         const response = await db.query(query, [display_name, email]);
-        console.log(response)
-    } catch(error) {
-        console.log(error, "Something went wrong!")
+        return response.rows[0]
+    } catch (error) {
+        console.log(error, "Something went wrong!");
         return null;
     }
 }
@@ -346,7 +366,10 @@ passport.use(
         async function (email, password, cb) {
             if ((await userExist(email)) === true) {
                 const user = await getUser(email);
-                if (await bcrypt.compare(password, user.password)) {
+                if(user.password == 'Google'){
+                    cb("Login with google", null)
+                }
+                else if (await bcrypt.compare(password, user.password)) {
                     cb(null, user);
                 } else {
                     cb("Wrong Password!", null);

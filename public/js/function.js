@@ -23,8 +23,9 @@ $(".drop-down").each(function (index, dropdown) {
 
                 const radioId = $(label).attr("for");
                 $("#" + radioId).prop("checked", true);
-
-                label.closest("form").submit();
+                if (!window.location.href == "/me") {
+                    label.closest("form").submit();
+                }
             });
         });
 
@@ -41,7 +42,7 @@ $(".drop-down").each(function (index, dropdown) {
 // Make page change option working
 $(".page").on("click", function () {
     const page = $(this).text() - 1;
-    console.log(page)
+    console.log(page);
 
     const searchParams = new URLSearchParams(window.location.search);
 
@@ -106,15 +107,15 @@ $(".close-button").on("click", (e) => {
 $(".caret").each(async (Index, caret) => {
     $(caret).on("click", async () => {
         let page;
-        console.log($(".selected-page").text())
+        console.log($(".selected-page").text());
         if ($(caret).hasClass("right")) {
-            console.log("right")
-            page = await $(".selected-page").text() - 1 + 1; // current page + 1 -1 +1(for next page)
-        }else {
-            page = await $(".selected-page").text() - 2; // page before previous page
+            console.log("right");
+            page = (await $(".selected-page").text()) - 1 + 1; // current page + 1 -1 +1(for next page)
+        } else {
+            page = (await $(".selected-page").text()) - 2; // page before previous page
         }
 
-        console.log(page)
+        console.log(page);
         const searchParams = new URLSearchParams(window.location.search);
 
         // Set or update the 'page' parameter
@@ -129,4 +130,14 @@ $(".caret").each(async (Index, caret) => {
         // Log the updated search string
         console.log(updatedSearchString);
     });
+});
+
+$(".edit").on("click", () => {
+    $(".edit-box-wrapper").removeClass("disabled");
+    $(".edit-box").removeClass("disabled");
+});
+
+$(".edit-box-wrapper-close").on("click", () => {
+    $(".edit-box-wrapper").addClass("disabled");
+    $(".edit-box").addClass("disabled");
 });

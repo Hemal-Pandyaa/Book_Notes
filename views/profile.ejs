@@ -1,23 +1,168 @@
-<%- include('./partials/header.ejs') %>
+<% function isActive(status){ return status.toLowerCase() ==
+user.status.toLowerCase() ? "active" : "" } %> <%-
+include('./partials/header.ejs') %>
 <div class="container">
-    <div class="card1">
-        <div class="profile-image"><img draggable="false" src="<%= user.display_picture %>" alt="profile-image" /></div>
-        <div class="info">
-            <div class="display_name"><p><%= user.display_name ? user.display_name : "" %></p></div>
-            <div class="date_joined"></div>
-            <div class="level"></div>
-            <div class="submissions"></div>
+    <div class="wrapper">
+        <div class="edit-box-wrapper disabled">
+            <div class="edit-box disabled">
+                <button class="edit-box-wrapper-close">
+                    <img src="/images/plus.svg" alt="Cross icon" />
+                </button>
+                <h1 class="heading">Edit Profile</h1>
+                <form action="/me" method="POST">
+                    <label for="edit-image">
+                        <div class="edit-image">
+                            <img
+                                src="<%= user.display_picture %>"
+                                alt="User's display picture"
+                                class="edit-image" />
+                            <div class="pencil-svg">
+                                <img
+                                    src="/images/pencil.svg"
+                                    alt="edit button" />
+                            </div>
+                        </div>
+                    </label>
+
+                    <label for="display_name">
+                        <p>Display Name :</p>
+                        <input
+                            type="text"
+                            name="display_name"
+                            class="input"
+                            autocomplete="off"
+                            value="<%= user.display_name %>" />
+                    </label>
+
+                    <label for="about">
+                        <p>About :</p>
+                        <textarea
+                            type="text"
+                            name="about"
+                            class="input textarea"
+                            autocomplete="off"
+                            rows="6"
+                            cols="46">
+<%= user.about %></textarea
+                        >
+                    </label>
+
+                    <label for="current_reading">
+                        <p>Which Book Are You Reading Currently ?</p>
+                        <input
+                            type="text"
+                            name="currently_reading"
+                            class="input"
+                            autocomplete="off"
+                            value="<%= user.currently_reading %>" />
+                    </label>
+
+                    <label for="favorite_book">
+                        <p>Which Is Your Favorite Book ?</p>
+                        <input
+                            type="text"
+                            name="favorite_book"
+                            class="input"
+                            autocomplete="off"
+                            value="<%= user.favorite_book %>" />
+                    </label>
+
+                    <label for="status">
+                        <div class="drop-down status">
+                            <!-- A - Z -->
+                            <p>
+                                <%= user.status == null? "Online" : user.status
+                                %>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    class="bi bi-caret-down-fill"
+                                    viewBox="0 0 16 16">
+                                    <path
+                                        d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                </svg>
+                            </p>
+
+                            <label
+                                class="<%= isActive('online') %>"
+                                for="online"
+                                >Online<input
+                                    type="radio"
+                                    name="status"
+                                    value="online"
+                                    checked
+                            /></label>
+                            <label
+                                class="<%= isActive('offline') %>"
+                                for="offline"
+                                >Offline<input
+                                    type="radio"
+                                    name="status"
+                                    value="offline"
+                            /></label>
+                            <label class="<%= isActive('idle') %>" for="idle"
+                                >Idle<input
+                                    type="radio"
+                                    name="status"
+                                    value="idle"
+                            /></label>
+                            <label
+                                class="<%= isActive('reading') %>"
+                                or="reading"
+                                >Reading<input
+                                    type="radio"
+                                    name="status"
+                                    value="reading"
+                            /></label>
+                            <label class="<%= isActive('dnd') %>" for="dnd"
+                                >Do Not Disturb<input
+                                    type="radio"
+                                    name="status"
+                                    value="dnd"
+                            /></label>
+                        </div>
+                    </label>
+                    <button type="submit" class="submit">Update!</button>
+                </form>
+            </div>
         </div>
-    </div>
-    <div class="card2">
-        <div class="about"></div>
-    </div>
-    <% if(locals.books){ %>
+        <div class="card1">
+            <div class="profile-image">
+                <img
+                    draggable="false"
+                    src="<%= user.display_picture %>"
+                    alt="images/placeholder.png" />
+            </div>
+            <div class="info">
+                <div class="display_name"><p><%= user.display_name %></p></div>
+                <div class="date_joined"><%= formattedDate %></div>
+                <div class="current_reading">
+                    <%= user.display_name %> Is Currently Reading : <br />
+                    <p class="highlight">
+                        <%= user.current_reading ? user.current_reading : "Nothing" %>
+                    </p>
+                    <div class="submissions"></div>
+                </div>
+            </div>
+            <button class="edit">
+                <img src="/images/pencil.svg" alt="pencil icon" />
+            </button>
+        </div>
+
+        <div class="card2">
+            <p class="heading">About :</p>
+            <p class="about highlight">
+                <%= 'I am software devloper and i have a hooby to read books  my part time I do this to increase my knowledge and this platform is the best way to do so i can read summary written by others and can also rephrase it..' %>
+            </p>
+        </div>
+        <!-- <% if(locals.books){ %>
     <div class="card3">
         <div class="books"></div>
     </div>
     <% } else { %>
-    <p class="nothing">Nothing to show!</p>
-    <% } %>
+    <p class="nothing">Nothing to show!</p> -->
+    </div>
 </div>
-<%- include('./partials/footer.ejs') %>
+<% } %> <%- include('./partials/footer.ejs') %>
