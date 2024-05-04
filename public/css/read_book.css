@@ -1,0 +1,172 @@
+
+
+.cover-image {
+    width: 200px;
+    height: 300px;
+    border: 1px solid black;
+    border-radius: inherit;
+}
+
+.info-card {
+    display: flex;
+    padding: 30px;
+    background-color: var(--primary-button-color);
+    border-radius: 12px;
+    gap: 20px;
+    width: 100%;
+}
+
+.cage {
+    border-radius: inherit;
+    box-sizing: border-box;
+    height: fit-content;
+    padding: 20px;
+    background-color: var(--primary-button-color-light);
+    max-width: max-content;
+}
+
+.description {
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.description > p {
+    font-size: 24px;
+}
+
+.rate {
+    font-family: FontAwesome;
+    margin-top: 20px;
+}
+
+.rate p{
+    font-size: 24px;
+}
+
+.info-card>p:first-child{
+    font-size: 36px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.info-card.chapters {
+    gap: 0px;
+    flex-direction: column;
+}
+
+.info-card.chapters .seprater{
+    width: 100%;
+    margin: none;
+    background-color: var(--secondary-color);
+}
+
+.chapter-name{
+    font-size: 18px;
+    letter-spacing:1px;
+    padding: 10px;
+}
+
+.chapter-name:hover{
+    color: white;
+
+}
+
+.info-card.comments{
+    flex-direction: column;
+}
+
+.comments .profile img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline;
+}
+
+.comment{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: auto;
+    align-items:normal;
+}
+
+.commentor {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: baseline;
+}
+
+.commentor .commentor-name{
+    font-weight: normal;
+    font-size: 24px;
+}
+
+.commentor .ago {
+    font-size: 16px;
+    font-weight: lighter;
+    color: black;
+    
+}
+
+.comment-message {
+    font-size: 16px;
+
+}
+
+.comment-message.cage{
+    padding: 6px 10px;
+    max-width: 100%;
+    text-align: wrap;
+    word-wrap: break-word;
+}
+
+.comment-wrapper{
+    width: 100% ;
+}
+
+.inverted{
+    transform: rotateY(180deg);
+}
+
+.star{
+    display: inline;
+    width: auto;
+    height: 100px;
+    padding: 5px;
+    
+}
+
+.star > button{
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    border: none;
+    width: 50px;
+    height: 50px;
+}
+
+.stars{
+    width: max-content;
+    margin: auto;
+}
+
+.half-star::before {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+
+.half-star::after {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: -2;
+}

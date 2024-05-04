@@ -58,6 +58,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
 
+//* Variables
+let cachedBooks = [];
+let chachedFilters = [];
+let cachedLength = null;
+
 //* routes
 
 //? Get Route
@@ -69,22 +74,35 @@ app.get("/", async (req, res) => {
     const sortIn = req.query.sortIn || "ASC";
     const sortBy = req.query.sortBy || "title";
     const search = req.query.search;
-    // splices the result to get the get all the books between 1 to 15
+
+    const currentFilter = [sortIn, sortBy, search];
     let books;
-    const infoRequired =
-        "title,author,description,display_name,rating,category,total_review,TO_CHAR(last_updated, 'Mon DD YYYY') AS last_updated,cover_image_url";
-    let result;
-    if (sortIn && sortBy) {
-        result = await getInfoOfBook(infoRequired, sortIn, sortBy, search);
+    let length;
+    const bothAreEqual =
+        JSON.stringify(chachedFilters) === JSON.stringify(currentFilter);
+    if (bothAreEqual && cachedBooks != []) {
+        books = cachedBooks;
+        length = cachedLength;
     } else {
-        result = await getInfoOfBook(infoRequired);
+        // splices the result to get the get all the books between 1 to 15
+
+        const infoRequired =
+            "books.id,title,author,description,display_name,rating,category,total_review,TO_CHAR(last_updated, 'Mon DD YYYY') AS last_updated,cover_image_url";
+        let result;
+        if (sortIn && sortBy) {
+            result = await getInfoOfBook(infoRequired, sortIn, sortBy, search);
+        } else {
+            result = await getInfoOfBook(infoRequired);
+        }
+        books = result;
+        cachedBooks = books;
+        length = result.length;
+        cachedLength = length;
+        chachedFilters = currentFilter;
     }
-    if (result.error) {
-    } else {
-        // Imagine page 0. // 0 * 15 = 0. // that splice to 0 to 0 + 15 which meanse 0 to 15
-        const bookThisPage = page * booksPerPage;
-        books = result.slice(bookThisPage, bookThisPage + booksPerPage);
-    }
+    // Imagine page 0. // 0 * 15 = 0. // that splice to 0 to 0 + 15 which meanse 0 to 15
+    const bookThisPage = page * booksPerPage;
+    books = books.slice(bookThisPage, bookThisPage + booksPerPage);
 
     let displayable = convertToDisplayable(sortIn, sortBy);
     let data = {
@@ -94,8 +112,8 @@ app.get("/", async (req, res) => {
         dSortIn: displayable.sortIn,
         dSortBy: displayable.sortBy,
         search: search,
-        totalResult: result.length,
-        totalAvalabilePage: result.length / booksPerPage,
+        totalResult: length,
+        totalAvalabilePage: length / booksPerPage,
         currentPage: page,
     };
     if (req.isAuthenticated()) {
@@ -147,9 +165,7 @@ app.get(
 );
 
 app.get("/me", (req, res) => {
-    console.log("Hello");
     if (req.isAuthenticated()) {
-        console.log(req.user);
         if (!req.user.display_name) {
             res.render("display_name.ejs");
             return;
@@ -167,6 +183,18 @@ app.get("/me", (req, res) => {
     } else {
         res.redirect("/login");
     }
+});
+
+app.post("/book", async (req, res) => {
+    let data = {};
+    if (req.isAuthenticated()) {
+        data["profileImage"] = req.user.display_picture;
+    }
+    const book_id = req.body.book_id;
+    const book_data = await getBookData(book_id);
+    data["book"] = book_data;
+    console.log(book_data);
+    res.render("read_book.ejs", data);
 });
 
 //? Post Methods
@@ -204,7 +232,7 @@ app.post("/updateField", async (req, res) => {
         console.log(FieldValue);
         updateField(FieldValue, req.user.id);
         req.logout((e) => {
-            console.log(e)
+            console.log(e);
         });
         res.redirect("/me");
     } else {
@@ -281,7 +309,6 @@ async function userExist(email) {
     try {
         const query = "Select email FROM users WHERE email=$1";
         var user = await db.query(query, [email]);
-        console.log(user.rows.length);
         if (user.rows.length === 0) {
             return false;
         } else {
@@ -305,7 +332,6 @@ async function getUser(email) {
 
 async function updateDisplayName(display_name, email) {
     try {
-        console.log(display_name, email);
         const query =
             "UPDATE users SET display_name = $1 WHERE email = $2 RETURNING *";
         const response = await db.query(query, [display_name, email]);
@@ -330,13 +356,47 @@ async function updateField(FieldValue, id) {
         query = query.slice(0, -1);
         query = query.concat(` WHERE id = $${i} RETURNING *`);
         values.push(id);
-        console.log(query);
-        console.log(values);
         const response = await db.query(query, values);
         return response;
     } catch (error) {
         console.log(error);
         console.log("Something went wrong!");
+        return "Something went wrong!";
+    }
+}
+
+/**
+ *
+ * @param {Number} id to identify the book
+ * @returns {object }all comments chapters and creater and all about book
+ */
+async function getBookData(id) {
+    try {
+        const bookQuery =
+            "SELECT display_name, author, isbn, rating, description, date_created, last_updated, cover_image_url, author_image_url, category, total_review \
+            \
+            FROM books \
+            JOIN users on books.user_id = users.id \
+            WHERE books.id = $1";
+        const commentQuery =
+            " SELECT display_picture,display_name,comment,rating,date_commented FROM comments \
+            JOIN users ON comments.user_id = users.id \
+            WHERE book_id = $1";
+        const chapterQuery = "SELECT * FROM chapters WHERE book_id = $1";
+
+        const bookResponse = await db.query(bookQuery, [id]);
+        const commentResponse = await db.query(commentQuery, [id]);
+        commentResponse.rows.forEach((comment) => {
+            comment["timeAgo"] = timeAgo(comment.date_commented)
+        })
+        const chapterResponse = await db.query(chapterQuery, [id]);
+        const object = {
+            bookData: bookResponse.rows[0],
+            commentData: commentResponse.rows,
+            chapterData: chapterResponse.rows,
+        };
+        return object;
+    } catch {
         return "Something went wrong!";
     }
 }
@@ -383,6 +443,33 @@ function convertToDisplayable(sortIn, sortBy) {
     }
     return { sortBy: dSortBy, sortIn: dSortIn };
 }
+
+function timeAgo(timestamp) {
+    const now = new Date();
+    const past = new Date(timestamp);
+    const elapsed = now - past;
+    const seconds = Math.floor(elapsed / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(months / 12);
+
+    if (years >= 1) {
+        return years + (years === 1 ? " year" : " years") + " ago";
+    } else if (months >= 1) {
+        return months + (months === 1 ? " month" : " months") + " ago";
+    } else if (days >= 1) {
+        return days + (days === 1 ? " day" : " days") + " ago";
+    } else if (hours >= 1) {
+        return hours + (hours === 1 ? " hour" : " hours") + " ago";
+    } else if (minutes >= 1) {
+        return minutes + (minutes === 1 ? " minute" : " minutes") + " ago";
+    } else {
+        return seconds + (seconds === 1 ? " second" : " seconds") + " ago";
+    }
+}
+
 
 // * Stratergies
 passport.use(
@@ -438,7 +525,6 @@ passport.use(
             callbackURL: "http://localhost:3000/auth/callback",
         },
         async (accessToken, refreshToken, profile, cb) => {
-            console.log(profile._json.picture);
             try {
                 if ((await userExist(profile.email)) === false) {
                     const response = await addNewUser(

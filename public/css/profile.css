@@ -212,7 +212,7 @@
     height: inherit;
 }
 
-.active {
+.status.drop-down.active {
     color: black;
 }
 
