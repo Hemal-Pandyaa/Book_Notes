@@ -186,15 +186,27 @@ app.get("/me", (req, res) => {
 });
 
 app.post("/book", async (req, res) => {
-    let data = {};
     if (req.isAuthenticated()) {
+        if(req.body.rating && req.body.comment){
+            await postComment(req.body.rating, req.body.comment, req.user.id, req.body.book_id)
+        }
+        let data = {};
         data["profileImage"] = req.user.display_picture;
+        const book_id = req.body.book_id;
+        console.log(book_id);
+        data["id"] = book_id;
+        const book_data = await getBookData(book_id);
+        if(req.body.chapter){
+            console.log(book_data.chapterData)
+            data["note"] = book_data.chapterData[req.body.chapter].chapter_note
+        }
+        data["book"] = book_data;
+
+        // console.log(book_data);
+        res.render("read_book.ejs", data);
+    } else {
+        res.redirect("/login");
     }
-    const book_id = req.body.book_id;
-    const book_data = await getBookData(book_id);
-    data["book"] = book_data;
-    console.log(book_data);
-    res.render("read_book.ejs", data);
 });
 
 //? Post Methods
@@ -373,7 +385,7 @@ async function updateField(FieldValue, id) {
 async function getBookData(id) {
     try {
         const bookQuery =
-            "SELECT display_name, author, isbn, rating, description, date_created, last_updated, cover_image_url, author_image_url, category, total_review \
+            "SELECT display_name, title,author, isbn, rating, description, date_created, last_updated, cover_image_url, author_image_url, category, total_review \
             \
             FROM books \
             JOIN users on books.user_id = users.id \
@@ -387,8 +399,8 @@ async function getBookData(id) {
         const bookResponse = await db.query(bookQuery, [id]);
         const commentResponse = await db.query(commentQuery, [id]);
         commentResponse.rows.forEach((comment) => {
-            comment["timeAgo"] = timeAgo(comment.date_commented)
-        })
+            comment["timeAgo"] = timeAgo(comment.date_commented);
+        });
         const chapterResponse = await db.query(chapterQuery, [id]);
         const object = {
             bookData: bookResponse.rows[0],
@@ -398,6 +410,17 @@ async function getBookData(id) {
         return object;
     } catch {
         return "Something went wrong!";
+    }
+}
+
+async function postComment(rating,comment,user_id, book_id){
+    try{
+        const query = "INSERT INTO comments (rating, comment, user_id, book_id) \
+        VALUES ($1, $2, $3, $4);"
+
+        db.query(query,[rating,comment,user_id,book_id]);
+    }catch{
+        console.log("Something Went Wrong!")
     }
 }
 
@@ -469,7 +492,6 @@ function timeAgo(timestamp) {
         return seconds + (seconds === 1 ? " second" : " seconds") + " ago";
     }
 }
-
 
 // * Stratergies
 passport.use(

@@ -41,11 +41,15 @@
     margin-top: 20px;
 }
 
+.rate i{
+    color: gold;
+}
+
 .rate p{
     font-size: 24px;
 }
 
-.info-card>p:first-child{
+.info-card>form>p:first-child{
     font-size: 36px;
     display: block;
     margin-bottom: 10px;
@@ -68,9 +72,18 @@
     padding: 10px;
 }
 
+.chapter-name button{
+    background-color: transparent;
+}
+
 .chapter-name:hover{
     color: white;
 
+}
+
+button.chapter{
+    background-color: transparent;
+    border: none;
 }
 
 .info-card.comments{
@@ -131,42 +144,102 @@
     transform: rotateY(180deg);
 }
 
-.star{
-    display: inline;
+.star {
+    display: inline-block;
     width: auto;
     height: 100px;
-    padding: 5px;
-    
 }
 
-.star > button{
-    background-color: transparent;
-    padding: 0;
-    margin: 0;
-    border: none;
-    width: 50px;
-    height: 50px;
+.star input {
+    visibility: hidden;
 }
 
-.stars{
+.star label {
+    font-size: 3em;
+    cursor: pointer;
+    color: rgb(233, 214, 108);
+}
+
+.star{
+    cursor: pointer;
+}
+
+
+label.checked {
+    color: gold;
+}
+
+
+
+.stars {
     width: max-content;
-    margin: auto;
+    margin: 20px auto;
+    height: 50px;
+    display: flex;
+    gap: 0px;
 }
 
-.half-star::before {
-    width: 50%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -2;
+
+.write-comment img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
 }
 
-.half-star::after {
-    width: 50%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: -2;
+.write-comment{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+}
+
+.write-comment input{
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid black;
+    transition: border-width 0.2s linear;
+    width: 95%;
+    font-size: 20px;
+    padding: 2px 5px;
+
+}
+
+.write-comment input::placeholder {
+    color: rgb(212, 212, 212);
+}
+
+.write-comment input:focus::placeholder{
+    color: transparent;
+}
+
+.write-comment input:focus-visible{
+    outline: none;
+    transition: border-width 0.2s linear;
+    border-width: 2px;
+}
+
+.write-comment div{
+    width: 95%;
+}
+
+.write-comment img{
+    cursor: pointer;
+}
+
+.write-comment button{
+    background-color: transparent;
+    border: none;
+}
+
+.hidden{
+    display: none;
+}
+
+.note{
+    font-size: 24px;
+}
+
+.arrow{
+    /* margin-top: 10px; */
+    transform: rotateY(180deg);
 }

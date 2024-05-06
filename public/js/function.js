@@ -83,7 +83,7 @@ $(["#retype-password", "#password"]).each((index, password) => {
     $(password).on("keyup", (e) => {
         const retypeText = $("#retype-password").val();
         const password = $("#password").val();
-         
+
         if (retypeText !== "" && password !== "") {
             if (retypeText === password) {
                 $(".message").text("");
@@ -101,15 +101,13 @@ $(".close-button").on("click", (e) => {
 $(".caret").each(async (Index, caret) => {
     $(caret).on("click", async () => {
         let page;
-         
+
         if ($(caret).hasClass("right")) {
-             
             page = (await $(".selected-page").text()) - 1 + 1; // current page + 1 -1 +1(for next page)
         } else {
             page = (await $(".selected-page").text()) - 2; // page before previous page
         }
 
-         
         const searchParams = new URLSearchParams(window.location.search);
 
         // Set or update the 'page' parameter
@@ -120,7 +118,6 @@ $(".caret").each(async (Index, caret) => {
 
         // Update the window location with the new search string
         window.location.search = updatedSearchString;
-         
     });
 });
 
@@ -134,3 +131,64 @@ $(".edit-box-wrapper-close").on("click", () => {
     $(".edit-box").addClass("disabled");
 });
 
+$(".star").hover(
+    function () {
+        let id = $(this).attr("id"); // Get the ID of the hovered element
+        id = id.slice(1);
+        //  
+        for (let i = 1; i <= id; i++) {
+            const element = `#s${i}.star`;
+            //  
+            if (
+                $(element).length > 0 &&
+                !$(element + " label").hasClass("fas")
+            ) {
+                //  
+                //  
+                $(element + " label").addClass("fas checked");
+            }
+        }
+    },
+    function () {
+        let id = $(this).attr("id"); // Get the ID of the hovered element
+        id = id.slice(1);
+        //  
+        for (let i = 1; i <= id; i++) {
+            const element = `#s${i}.star`;
+            //  
+            if (
+                $(element).length > 0 &&
+                $(element + " label").hasClass("fas")
+            ) {
+                //  
+                //  
+                if (!$(element + " label").hasClass("selected")) {
+                     
+                    $(element + " label").removeClass("fas checked");
+                }
+            }
+        }
+    }
+);
+
+$(".star").on("click", function () {
+    let id = $(this).attr("id"); // Get the ID of the hovered element
+    id = id.slice(1);
+    for (let i = 1; i <= id; i++) {
+        const element = `#s${i}.star`;
+        if ($(element).length > 0) {
+            $(element + " label").addClass("fas selected");
+        }
+    }
+     
+    for(let i = parseInt(id) + 1; i <= 5; i++){
+         
+        const element = `#s${i}.star`;
+        $(element + " label").removeClass("fas selected");
+    }
+});
+
+
+$(".arrow").on("click", () => {
+    parent.history.back()
+})

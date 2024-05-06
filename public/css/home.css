@@ -235,21 +235,21 @@ button .book {
 
 .read-button::after {
     content: "";
-    width: calc(100% + 8px);
-    height: calc(100% + 8px);
+    width: calc(100% + 12px);
+    height: calc(100% + 12px);
     z-index: -1;
     background: linear-gradient(45deg,
     rgb(0, 153, 255),
     rgb(0, 128, 230),
-    rgb(0, 77, 179),
-    rgb(16, 78, 139)
+    rgb(13, 53, 216),
+    rgb(9, 13, 251)
 );
 
 
 
     position: absolute;
-    top: -4px;
-    left: -4px;
+    top: -6px;
+    left: -6px;
     filter: blur(6px);
     border-radius: 8px;
     background-size: 400% 100%; /* Background size */

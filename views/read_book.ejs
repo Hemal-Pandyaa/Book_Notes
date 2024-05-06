@@ -1,104 +1,124 @@
-<%- include('./partials/header.ejs') %>
-
-<% function howMuchStar(starNo) {
-
-let diff = book.bookData.rating - starNo;
-diff = Math.round(diff * 10) / 10
-if (diff >= 1) {
-return "fa fa-star"
-} else if (diff > -0.4 && diff < 1) { // if star no is x.7 or higher
-return "fa fa-star"
-} else if (diff > -0.8 && diff < 1) {
-return "fa fa-star-half-stroke"
-} else {
-return "far fa-star"
-}
-
-} %>
+<%- include('./partials/header.ejs') %> <% function howMuchStar(starNo) { 
+    let diff = book.bookData.rating - starNo; diff = Math.round(diff * 10) / 10 
+    if (diff>= 1) { return "fa fa-star" } else if (diff > -0.4 && diff < 1) { 
+ return "fa fa-star" } else if (diff > -0.8 && diff < 1) {
+return "fa fa-star-half-stroke" } else { return "far fa-star" } } %>
 <div class="container">
     <div class="info-card">
         <div class="cage">
-            <img class="cover-image"
+            <img
+                class="cover-image"
                 src="<%= book.bookData.cover_image_url %>"
                 alt="Cover image" />
         </div>
         <div class="description">
             <p>Description :</p>
             <div class="cage">
-                <p class="">
-                    <%= book.bookData.description %>
-                </p>
+                <p class=""><%= book.bookData.description %></p>
             </div>
             <div class="rate">
-                <p class="">Rating : </p>
-                <i class="fa-2x<%= howMuchStar(1) %>"></i>
-                <i class="fa-2x<%= howMuchStar(2) %>"></i>
-                <i class="fa-2x<%= howMuchStar(3) %>"></i>
-                <i class="fa-2x<%= howMuchStar(4) %>"></i>
-                <i class="fa-2x<%= howMuchStar(5) %>"></i>
+                <p class="">Rating :</p>
+                <i class="fa-2x <%= howMuchStar(1) %>"></i>
+                <i class="fa-2x <%= howMuchStar(2) %>"></i>
+                <i class="fa-2x <%= howMuchStar(3) %>"></i>
+                <i class="fa-2x <%= howMuchStar(4) %>"></i>
+                <i class="fa-2x <%= howMuchStar(5) %>"></i>
             </div>
         </div>
     </div>
 
     <div class="info-card chapters">
-        <p>Chapters: </p>
-        <div class="seprater"></div>
-        <% book.chapterData.forEach(chapter => { %>
-        <p class="chapter-name">
-            <%= chapter.chapter_name %>
-        </p>
-        <div class="seprater"></div>
-        <% }) %>
+        <% if (locals.note) { %>
+        <p class="note"><%= note %></p>
+        <i class="fas fa-arrow-right fa-2x arrow"></i>
+        <% } else { %>
+        <form action="/book" method="POST">
+            <p>Chapters:</p>
+            <div class="seprater"></div>
+            <input
+                class="hidden"
+                type="text"
+                value="<%= id %>"
+                name="book_id" />
+            <% book.chapterData.forEach((chapter, index) => { %>
+            <button class="chapter" type="submit" name="chapter" value="<%= `${index}` %>">
+                <p class="chapter-name"><%= chapter.chapter_name %></p>
+            </button>
+            <div class="seprater"></div>
+            <% }) %>
+        </form>
+        <% } %>
     </div>
 
-
-
-
     <div class="info-card comments">
+        <form action="/book" class="post-comment" method="POST">
+            <input
+                class="hidden"
+                type="text"
+                value="<%= id %>"
+                name="book_id" />
 
-        <form action="#" class="post-comment" method="POST">
             <div class="stars">
-                <div class="star">
-                    <button
-                        type="button" class="fa-regular fa-star fa-3x half-star1 half-star"></button>
+                <div class="star" id="s1">
+                    <input
+                        type="radio"
+                        name="rating"
+                        id="star1"
+                        value="1"
+                        required />
+                    <label for="star1" class="far fa-star fa-3x"></label>
                 </div>
-                <div class="star">
-                    <button
-                        type="button" class="fa-regular fa-star fa-3x half-star3 half-star"></button>
+                <div class="star" id="s2">
+                    <input type="radio" name="rating" id="star2" value="2" />
+                    <label for="star2" class="far fa-star fa-3x"></label>
                 </div>
-                <div class="star">
-                    <button
-                        type="button" class="fa-regular fa-star fa-3x half-star5 half-star"></button>
+                <div class="star" id="s3">
+                    <input type="radio" name="rating" id="star3" value="3" />
+                    <label for="star3" class="far fa-star fa-3x"></label>
                 </div>
-                <div class="star">
-                    <button
-                        type="button" class="fa-regular fa-star fa-3x half-star7 half-star"></button>
+                <div class="star" id="s4">
+                    <input type="radio" name="rating" id="star4" value="4" />
+                    <label for="star4" class="far fa-star fa-3x"></label>
                 </div>
-                <div class="star">
-                    <button
-                        type="button" class="fa-regular fa-star fa-3x half-star9 half-star"></button>
+                <div class="star" id="s5">
+                    <input type="radio" name="rating" id="star5" value="5" />
+                    <label for="star5" class="far fa-star fa-3x"></label>
+                </div>
+            </div>
+
+            <div class="write-comment">
+                <img src="<%= profileImage %>" alt="Profie Image" />
+                <div>
+                    <input
+                        type="text"
+                        name="comment"
+                        placeholder="Comment on book '<%= book.bookData.title %>'"
+                        autocomplete="off"
+                        required />
+                    <button type="submit">
+                        <img
+                            src="/images/send.png"
+                            alt="Send button"
+                            clickable
+                            focusable />
+                    </button>
                 </div>
             </div>
         </form>
         <% book.commentData.forEach(comment => { %>
         <div class="comment cage">
             <div class="profile">
-                <img src="<%= comment.display_picture %>"
-                    alt="commenter's display Picture">
+                <img
+                    src="<%= comment.display_picture %>"
+                    alt="commenter's display Picture" />
             </div>
-            <div class="comment-wrapper ">
+            <div class="comment-wrapper">
                 <div class="commentor">
-                    <p class="commentor-name">
-                        <%= comment.display_name %>
-                    </p>
-                    <p class="ago">
-                        <%= comment.timeAgo %>
-                    </p>
+                    <p class="commentor-name"><%= comment.display_name %></p>
+                    <p class="ago"><%= comment.timeAgo %></p>
                 </div>
                 <div class="comment-message">
-                    <p>
-                        <%= comment.comment %>
-                    </p>
+                    <p><%= comment.comment %></p>
                 </div>
             </div>
         </div>
